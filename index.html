@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SOLCAR.AUCTION | Crypto Car Marketplace</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>SOLCAR<span>.AUCTION</span></h1>
+      <div class="sol-price">
+        <span id="solRate">1 SOL = $161.00</span>
+      </div>
+    </header>
+
+    <main>
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All Cars</button>
+        <button class="filter-btn" data-filter="salvage">🚗 Salvage</button>
+        <button class="filter-btn" data-filter="clean">🚙 Clean</button>
+        <button class="filter-btn" data-filter="luxury">🏎 Luxury</button>
+      </div>
+
+      <div class="cars-grid" id="carsGrid">
+        <!-- Карточки будут добавляться через JS -->
+      </div>
+    </main>
+
+    <!-- Поп-ап с деталями авто -->
+    <div class="car-popup" id="carPopup">
+      <div class="popup-content">
+        <span class="close-btn" id="closePopup">&times;</span>
+        <div class="car-gallery" id="carGallery"></div>
+        <div class="car-details">
+          <h2 id="popupCarTitle">BMW M5 2020</h2>
+          <div class="car-meta">
+            <span class="car-category" id="popupCarCategory">🏎 Luxury</span>
+            <span class="car-mileage" id="popupCarMileage">12,000 miles</span>
+            <span class="car-vin" id="popupCarVin">VIN: WBS***1234</span>
+          </div>
+          <div class="car-price">
+            <span class="sol-price" id="popupCarSolPrice">120 SOL</span>
+            <span class="usd-price" id="popupCarUsdPrice">$19,320</span>
+          </div>
+          <div class="auction-timer" id="popupAuctionTimer">
+            ⏳ Ends in: <span>02:45:12</span>
+          </div>
+          <a
+            href="#"
+            class="original-link"
+            id="originalLink"
+            target="_blank"
+          ></a>
+          <button class="bid-btn" id="placeBidBtn">Place Bid</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

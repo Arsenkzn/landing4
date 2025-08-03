@@ -1,0 +1,172 @@
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #0f0f12;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 5%;
+  background: #1a1a2e;
+  border-bottom: 1px solid #333;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+h1 span {
+  color: #00ff88;
+}
+
+.sol-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+}
+
+/* Фильтры */
+.filters {
+  display: flex;
+  gap: 10px;
+  padding: 20px 5%;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: #333;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.filter-btn.active {
+  background: #00ff88;
+  color: #000;
+}
+
+/* Сетка авто */
+.cars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 0 5% 40px;
+}
+
+.car-card {
+  background: #1a1a2e;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+
+.car-card:hover {
+  transform: translateY(-5px);
+}
+
+.car-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.car-info {
+  padding: 15px;
+}
+
+.car-title {
+  font-size: 1.2rem;
+  margin: 0 0 5px;
+}
+
+.car-category {
+  display: inline-block;
+  background: #333;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.car-price {
+  font-size: 1.3rem;
+  color: #00ff88;
+  margin: 10px 0;
+}
+
+.auction-timer {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+}
+
+.bid-btn {
+  width: 100%;
+  padding: 10px;
+  background: #00ff88;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Поп-ап */
+.car-popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: #1a1a2e;
+  width: 80%;
+  max-width: 900px;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.car-gallery {
+  flex: 1;
+  min-height: 400px;
+  background: #333;
+  border-radius: 8px;
+}
+
+.car-details {
+  flex: 1;
+}
+
+/* Адаптив */
+@media (max-width: 768px) {
+  .popup-content {
+    flex-direction: column;
+  }
+}
