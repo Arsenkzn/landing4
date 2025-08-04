@@ -162,8 +162,62 @@ const carsData = [
   },
 ];
 
-// Текущий курс SOL
-const solRate = 161;
+let solPrice = 160; // Начальная цена SOL
+let solRate = solPrice; // Текущий курс SOL/USD
+
+// Функция для обновления цены SOL с API
+async function updateSolPrice() {
+  try {
+    const response = await fetch(
+      "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd"
+    );
+    const data = await response.json();
+    if (data && data.solana && data.solana.usd) {
+      solRate = data.solana.usd;
+      updateAllPrices(); // Обновляем все цены при изменении курса
+    }
+  } catch (error) {
+    console.error("Error fetching SOL price:", error);
+    // В случае ошибки используем последнее известное значение
+  }
+}
+
+// Функция для обновления всех цен в интерфейсе
+function updateAllPrices() {
+  // Обновляем курс в заголовке
+  document.getElementById(
+    "solRateDisplay"
+  ).textContent = `1 SOL = $${solRate.toFixed(2)}`;
+
+  // Обновляем цены в карточках автомобилей
+  document.querySelectorAll(".car-card").forEach((card) => {
+    const carId = parseInt(card.querySelector(".bid-btn").dataset.carId);
+    const car = carsData.find((c) => c.id === carId);
+    if (car) {
+      const solPrice = (car.priceUsd / solRate).toFixed(2);
+      card.querySelector(
+        ".car-price:nth-of-type(2)"
+      ).textContent = `${solPrice} SOL`;
+    }
+  });
+
+  // Обновляем цены в попапе, если он открыт
+  const popup = document.getElementById("carPopup");
+  if (popup.style.display === "flex") {
+    const carId = parseInt(popup.querySelector("#popupCarTitle").dataset.carId);
+    const car = carsData.find((c) => c.id === carId);
+    if (car) {
+      const solPrice = (car.priceUsd / solRate).toFixed(2);
+      document.getElementById(
+        "popupCarSolPrice"
+      ).textContent = `${solPrice} SOL`;
+    }
+  }
+}
+
+// Запускаем обновление цены SOL каждые 30 секунд
+setInterval(updateSolPrice, 30000);
+updateSolPrice();
 
 // Глобальный объект для хранения времени окончания аукциона
 const auctionEndTimes = {};
