@@ -52,7 +52,7 @@
             <span class="usd-price" id="popupCarUsdPrice">$19,320</span>
           </div>
           <div class="auction-timer" id="popupAuctionTimer">
-            ⏳ Ends in: <span>02:45:12</span>
+            ⏳ Ends in: <span></span>
           </div>
           <a
             href="#"
@@ -66,7 +66,6 @@
     </div>
 
     <!-- Попап для подключения кошелька -->
-    <!-- Попап для подключения кошелька -->
     <div class="wallet-popup" id="walletPopup">
       <div class="wallet-popup-content">
         <span class="wallet-close-btn" id="walletCloseBtn">&times;</span>
@@ -76,7 +75,11 @@
         <a href="https://phantom.app/" target="_blank" class="phantom-link">
           Download Phantom Wallet
         </a>
-        <button class="connect-wallet-btn" id="connectWalletBtn">
+        <button
+          class="connect-wallet-btn"
+          id="connectWalletBtn"
+          onclick="window.open('https://phantom.app/', '_blank')"
+        >
           Connect Wallet
         </button>
       </div>

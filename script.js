@@ -80,43 +80,211 @@ const carsData = [
     priceUsd: 90000,
     auctionEnd: "2025-09-28T12:00:00",
   },
+  {
+    id: 9,
+    title: "2023 MERSEDES-AMG GT",
+    category: "luxury",
+    image: "img/mers1.png",
+    mileage: "10000 miles",
+    vin: "5MA**5688",
+    priceUsd: 90000,
+    auctionEnd: "2025-11-28T12:00:00",
+  },
+  {
+    id: 10,
+    title: "2024 MERSEDES BRABUS G63",
+    category: "luxury",
+    image: "img/brabus.png",
+    mileage: "3000 miles",
+    vin: "7H7***7777",
+    priceUsd: 140000,
+    auctionEnd: "2025-09-28T12:00:00",
+  },
+  {
+    id: 11,
+    title: "2022 RAM 5500",
+    category: "clean",
+    image: "img/ram.png",
+    mileage: "10000 miles",
+    vin: "3C7WRNDL9NG******",
+    priceUsd: 46000,
+    auctionEnd: "2025-11-28T12:00:00",
+  },
+  {
+    id: 12,
+    title: "2022 JEEP WRANGLER SPORT",
+    category: "salvage",
+    image: "img/jeep.png",
+    mileage: "78000 miles",
+    vin: "1C4GJXAN9NW******",
+    priceUsd: 8900,
+    auctionEnd: "2025-09-28T12:00:00",
+  },
+  {
+    id: 13,
+    title: "2018 TESLA MODEL X",
+    category: "clean",
+    image: "img/teslaX.png",
+    mileage: "59000 miles",
+    vin: "5MA**5688",
+    priceUsd: 30000,
+    auctionEnd: "2025-11-28T12:00:00",
+  },
+  {
+    id: 14,
+    title: "2024 TESLA MODEL Y",
+    category: "clean",
+    image: "img/teslaY.png",
+    mileage: "16000 miles",
+    vin: "7SAYGDEE9PA******",
+    priceUsd: 36000,
+    auctionEnd: "2025-09-28T12:00:00",
+  },
+  {
+    id: 15,
+    title: "2017 BUICK LACROSSE ESSENCE",
+    category: "clean",
+    image: "img/buick.png",
+    mileage: "85000 miles",
+    vin: "1G4ZP5SS4HU******",
+    priceUsd: 16000,
+    auctionEnd: "2025-11-28T12:00:00",
+  },
+  {
+    id: 16,
+    title: "2023 LINCOLN AVIATOR RESERVE",
+    category: "luxury",
+    image: "img/lincoln.png",
+    mileage: "40000 miles",
+    vin: "5LM5J7XC5PG******",
+    priceUsd: 30000,
+    auctionEnd: "2025-09-28T12:00:00",
+  },
 ];
 
-// Текущий курс SOL (можно обновлять вручную)
+// Текущий курс SOL
 const solRate = 161;
 
-// Загрузка карточек на главную
-document.addEventListener("DOMContentLoaded", () => {
-  displayCars(carsData);
-  setupFilters();
-});
+// Глобальный объект для хранения времени окончания аукциона
+const auctionEndTimes = {};
 
-// Отображение карточек
+// Функция для генерации случайного времени окончания аукциона
+function generateAuctionEndTime() {
+  const now = new Date();
+  const randomDays = Math.floor(Math.random() * 7) + 1; // 1-7 дней
+  const randomHours = Math.floor(Math.random() * 24); // 0-23 часа
+  const randomMinutes = Math.floor(Math.random() * 60); // 0-59 минут
+
+  const endTime = new Date(now);
+  endTime.setDate(now.getDate() + randomDays);
+  endTime.setHours(now.getHours() + randomHours);
+  endTime.setMinutes(now.getMinutes() + randomMinutes);
+
+  return endTime;
+}
+
+// Получаем или генерируем время окончания аукциона
+function getAuctionEndTime(carId) {
+  if (!auctionEndTimes[carId]) {
+    const savedTime = localStorage.getItem(`auctionEndTime_${carId}`);
+    if (savedTime) {
+      auctionEndTimes[carId] = new Date(savedTime);
+    } else {
+      auctionEndTimes[carId] = generateAuctionEndTime();
+      localStorage.setItem(
+        `auctionEndTime_${carId}`,
+        auctionEndTimes[carId].toISOString()
+      );
+    }
+  }
+  return auctionEndTimes[carId];
+}
+
+// Функция для форматирования оставшегося времени
+function formatTimeRemaining(endTime) {
+  const now = new Date();
+  const diff = endTime - now;
+
+  if (diff <= 0) {
+    return "⏳ The auction has ended";
+  }
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+  return `⏳ Ends in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+// Функция для запуска таймера
+function startTimer(timerElement, carId) {
+  // Очищаем предыдущий интервал, если он есть
+  if (timerElement.dataset.intervalId) {
+    clearInterval(parseInt(timerElement.dataset.intervalId));
+  }
+
+  const update = () => {
+    const endTime = getAuctionEndTime(carId);
+    timerElement.textContent = formatTimeRemaining(endTime);
+  };
+
+  // Обновляем сразу
+  update();
+
+  // Запускаем интервал и сохраняем ID
+  const intervalId = setInterval(update, 1000);
+  timerElement.dataset.intervalId = intervalId;
+}
+
+// Вспомогательные функции
+function getCategoryIcon(category) {
+  const icons = {
+    salvage: "🚗",
+    clean: "🚙",
+    luxury: "🏎",
+  };
+  return icons[category] || "";
+}
+
+// Отображение карточек автомобилей
 function displayCars(cars) {
   const carsGrid = document.getElementById("carsGrid");
   carsGrid.innerHTML = "";
 
   cars.forEach((car) => {
     const solPrice = (car.priceUsd / solRate).toFixed(2);
+    const endTime = getAuctionEndTime(car.id);
+    const timeRemaining = formatTimeRemaining(endTime);
 
     const carCard = document.createElement("div");
     carCard.className = `car-card ${car.category}`;
     carCard.innerHTML = `
-            <img src="${car.image}" alt="${car.title}" class="car-image">
-            <div class="car-info">
-                <h3 class="car-title">${car.title}</h3>
-                <span class="car-category">${getCategoryIcon(
-                  car.category
-                )} ${car.category.toUpperCase()}</span>
-                <div class="car-price">${car.priceUsd} $</div>
-                <div class="car-price">${solPrice} SOL</div>
-                <div class="auction-timer">⏳ Ends in: ${getRandomTime()}</div>
-                <button class="bid-btn" data-car-id="${
-                  car.id
-                }">View / Bid</button>
-            </div>
-        `;
+                    <img src="${car.image}" alt="${
+      car.title
+    }" class="car-image">
+                    <div class="car-info">
+                        <h3 class="car-title">${car.title}</h3>
+                        <span class="car-category">${getCategoryIcon(
+                          car.category
+                        )} ${car.category.toUpperCase()}</span>
+                        <div class="car-price">${car.priceUsd} $</div>
+                        <div class="car-price">${solPrice} SOL</div>
+                        <div class="auction-timer" data-car-id="${
+                          car.id
+                        }">${timeRemaining}</div>
+                        <button class="bid-btn" data-car-id="${
+                          car.id
+                        }">View / Bid</button>
+                    </div>
+                `;
     carsGrid.appendChild(carCard);
+  });
+
+  // Запускаем таймеры для всех карточек
+  document.querySelectorAll(".auction-timer").forEach((timerElement) => {
+    const carId = parseInt(timerElement.getAttribute("data-car-id"));
+    startTimer(timerElement, carId);
   });
 
   // Навешиваем обработчики на кнопки
@@ -129,26 +297,7 @@ function displayCars(cars) {
   });
 }
 
-// Фильтрация авто
-function setupFilters() {
-  const filterBtns = document.querySelectorAll(".filter-btn");
-  filterBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      filterBtns.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-
-      const filter = btn.getAttribute("data-filter");
-      if (filter === "all") {
-        displayCars(carsData);
-      } else {
-        const filteredCars = carsData.filter((car) => car.category === filter);
-        displayCars(filteredCars);
-      }
-    });
-  });
-}
-
-// Показ поп-апа
+// Показ попапа с автомобилем
 function showCarPopup(carId) {
   const car = carsData.find((c) => c.id === carId);
   if (!car) return;
@@ -174,35 +323,18 @@ function showCarPopup(carId) {
   const carGallery = document.getElementById("carGallery");
   carGallery.innerHTML = `<img src="${car.image}" alt="${car.title}" style="width:100%;height:100%;object-fit:cover;">`;
 
-  // Таймер аукциона
-  const timerElement = document.getElementById("popupAuctionTimer");
-
-  function updateTimer() {
-    const now = new Date();
-    const endDate = new Date(car.auctionEnd);
-    const diff = endDate - now;
-
-    if (diff <= 0) {
-      timerElement.innerHTML = "⏳ The auction has ended";
-      return;
-    }
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-    timerElement.innerHTML = `⏳ Ends: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-  }
-
-  // Обновляем таймер каждую секунду
-  updateTimer();
-  const timerInterval = setInterval(updateTimer, 1000);
+  // Таймер аукциона в попапе
+  const popupTimerElement = document.getElementById("popupAuctionTimer");
+  popupTimerElement.setAttribute("data-car-id", carId);
+  startTimer(popupTimerElement, carId);
 
   // Функция для закрытия попапа
   function closeCarPopup() {
     popup.style.display = "none";
-    clearInterval(timerInterval);
+    // Очищаем таймер попапа
+    if (popupTimerElement.dataset.intervalId) {
+      clearInterval(parseInt(popupTimerElement.dataset.intervalId));
+    }
   }
 
   // Функция для закрытия попапа кошелька
@@ -240,23 +372,33 @@ function showCarPopup(carId) {
   // Демо-действие при "Connect Wallet"
   document.getElementById("connectWalletBtn").addEventListener("click", () => {
     closeWalletPopup();
+    alert("Wallet connected successfully!");
   });
 
   popup.style.display = "flex";
 }
 
-// Вспомогательные функции
-function getCategoryIcon(category) {
-  const icons = {
-    salvage: "🚗",
-    clean: "🚙",
-    luxury: "🏎",
-  };
-  return icons[category] || "";
+// Фильтрация авто
+function setupFilters() {
+  const filterBtns = document.querySelectorAll(".filter-btn");
+  filterBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filterBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const filter = btn.getAttribute("data-filter");
+      if (filter === "all") {
+        displayCars(carsData);
+      } else {
+        const filteredCars = carsData.filter((car) => car.category === filter);
+        displayCars(filteredCars);
+      }
+    });
+  });
 }
 
-function getRandomTime() {
-  const hours = Math.floor(Math.random() * 24);
-  const mins = Math.floor(Math.random() * 60);
-  return `${hours}h ${mins}m`;
-}
+// Инициализация при загрузке страницы
+document.addEventListener("DOMContentLoaded", () => {
+  displayCars(carsData);
+  setupFilters();
+});

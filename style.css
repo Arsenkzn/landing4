@@ -71,6 +71,7 @@ h1 span {
   overflow: hidden;
   transition: transform 0.3s;
   cursor: pointer;
+  border: 3px solid #f24343;
 }
 
 .car-card:hover {
@@ -109,7 +110,7 @@ h1 span {
 
 .auction-timer {
   color: #ff6b6b;
-  font-size: 0.9rem;
+  font-size: 22px;
 }
 
 .bid-btn {
